@@ -1,0 +1,39 @@
+{
+  "name": "qiniu-web-uploader",
+  "version": "1.0.0",
+  "description": "七牛上传模块",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/conglai/qiniu-web-uploader.git"
+  },
+  "keywords": [
+    "qiniu",
+    "web",
+    "uploader"
+  ],
+  "author": "ykan",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/conglai/qiniu-web-uploader/issues"
+  },
+  "homepage": "https://github.com/conglai/qiniu-web-uploader",
+  "dependencies": {
+    "babel-cli": "^6.5.1",
+    "babel-plugin-transform-class-properties": "^6.4.0",
+    "babel-plugin-transform-es2015-classes": "^6.4.0",
+    "babel-plugin-transform-es2015-object-super": "^6.4.0",
+    "babel-plugin-transform-runtime": "^6.4.0",
+    "babel-preset-es2015": "^6.3.13",
+    "babel-preset-stage-0": "^6.3.13",
+    "gulp": "^3.9.1",
+    "gulp-babel": "^6.1.2",
+    "gulp-mocha": "^2.2.0",
+    "gulp-util": "^3.0.7",
+    "mocha": "^2.4.5",
+    "should": "^8.2.2"
+  }
+}

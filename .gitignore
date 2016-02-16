@@ -1,0 +1,6 @@
+node_modules
+build
+
+__tests__/tmp
+
+*.log
