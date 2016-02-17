@@ -29,9 +29,9 @@ export default class UploaderQueue extends EventEmitter {
     this.__bytesTotal = 0;
   }
 
-  pushImg(file, uptoken) {
+  pushImg(file, uptoken, compress = false) {
     let info = new LoaderInfo(file);
-    let uploader = new Uploader(info, uptoken);
+    let uploader = new Uploader(info, uptoken, compress);
     this._loaderArr.push(uploader);
     this._infoArr.push(info);
     return info;

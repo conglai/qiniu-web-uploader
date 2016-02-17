@@ -16,8 +16,11 @@ function dataURItoBlob(dataURI) {
 
 export default class QNImageUploader{
 
-  constructor(info, uptoken) {
+  constructor(info, uptoken, compress = false) {
     this._info = info;
+    if(!compress) {
+      info.blob = info.file;
+    }
     this.__ctxList = [];
     this._uptoken = uptoken;
   }
