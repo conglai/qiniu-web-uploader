@@ -2,7 +2,7 @@
   "name": "qiniu-web-uploader",
   "version": "1.0.0",
   "description": "七牛上传模块",
-  "main": "index.js",
+  "main": "lib/index.js",
   "scripts": {
     "test": "mocha"
   },
