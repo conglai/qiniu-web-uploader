@@ -7,9 +7,8 @@ const PARALLEL_NUM = 8;
 
 export default class UploaderQueue extends EventEmitter {
 
-  constructor(notBuildNode = false) {
+  constructor() {
     super();
-    this._notBuildNode = notBuildNode;
     this._loaderArr = [];
     this._infoArr = [];
     this._loadedArr = [];
@@ -30,9 +29,9 @@ export default class UploaderQueue extends EventEmitter {
     this.__bytesTotal = 0;
   }
 
-  pushImg(file) {
+  pushImg(file, uptoken) {
     let info = new LoaderInfo(file);
-    let uploader = new Uploader(info);
+    let uploader = new Uploader(info, uptoken);
     this._loaderArr.push(uploader);
     this._infoArr.push(info);
     return info;
@@ -57,49 +56,10 @@ export default class UploaderQueue extends EventEmitter {
   }
 
   _pushLoadedImg(uploader) {
-    if(this._notBuildNode) {
-      return;
-    }
-    let loadedArr = this._loadedArr;
-    let runLoaderNum = this._runLoaderNum;
-
-    loadedArr.push(uploader);
-    if(!runLoaderNum || loadedArr.length > 9) {
-      this._buildNodes(!runLoaderNum);
-    }
-    if(!runLoaderNum) {
+    if(!this._runLoaderNum) {
       this.__isLoading = false;
     }
   }
-
-  _buildNodes = async function(isComplete) {
-    let loadedArr = this._loadedArr;
-    this._loadedArr = [];
-    let nodes = loadedArr.map(loader => {
-      let info = loader.info;
-      return {
-        addr: info.imgKey,
-        camera_date: info.lastModifiedDate
-      };
-    });
-    let res = await Top.io.post('nnode', {
-      build_type: 5,
-      nodes: JSON.stringify(nodes)
-    });
-    let nids = res.data.nids;
-    let infos = this._infoArr;
-    infos.forEach(info => {
-      let nid = nids[info.imgKey];
-      if(nid) {
-        info.nodeId = nid;
-      }
-    });
-    if(isComplete) {
-      this.__isComplete = true;
-      this.emit('complete');
-    }
-
-  };
 
   _runSingleLoader = async function(uploader) {
     let res = await uploader.doNextAction();
@@ -125,7 +85,7 @@ export default class UploaderQueue extends EventEmitter {
       }
     });
     this._infoArr = infoArr;
-    this.emit('delete');
+    this.emit('delete', info);
   }
 
   get infos() {
@@ -149,19 +109,13 @@ export default class UploaderQueue extends EventEmitter {
     infoArr.forEach(info => {
       loaded += info.offset;
       total += info.size;
-      if(!info.size) {
-        log('info.size:' + info.size);
-        log(info);
-      }
     });
-    this.bytesLoaded = loaded;
-    this.bytesTotal = total;
-    if(total === loaded && this._notBuildNode) {
+    this.__bytesLoaded = loaded;
+    this.__bytesTotal = total;
+    if(total === loaded) {
       this.__isLoading = false;
       this.__isComplete = true;
-      if(this._notBuildNode) {
-        this.emit('complete');
-      }
+      this.emit('complete');
     } else {
       if(!this.__isComplete) {
         this.emit('progress');
@@ -169,14 +123,8 @@ export default class UploaderQueue extends EventEmitter {
     }
   }
 
-  set bytesLoaded(v) {
-    this.__bytesLoaded = v;
-  }
   get bytesLoaded() {
     return this.__bytesLoaded;
-  }
-  set bytesTotal(v) {
-    this.__bytesTotal = v;
   }
   get bytesTotal() {
     return this.__bytesTotal;
@@ -185,6 +133,4 @@ export default class UploaderQueue extends EventEmitter {
   get isComplete() {
     return this.__isComplete;
   }
-
-
 }

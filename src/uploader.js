@@ -1,4 +1,3 @@
-import { ua, io, log, _, dom } from '../top.jsx';
 const UPLOAD_URL = 'http://upload.qiniu.com/';
 const BLOCK_SIZE = 1024 * 1024 * 4;
 const CHUNK_SIZE = 1024 * 128;
@@ -17,9 +16,10 @@ function dataURItoBlob(dataURI) {
 
 export default class QNImageUploader{
 
-  constructor(info) {
+  constructor(info, uptoken) {
     this._info = info;
     this.__ctxList = [];
+    this._uptoken = uptoken;
   }
 
   destory() {
@@ -73,15 +73,12 @@ export default class QNImageUploader{
     let imgObj = new Image();
     let mimeType = file.type;
     let info = this._info;
-    log('file size:' + file.size);
     return new Promise((resolve, reject) => {
       imgObj.onload = () => {
         let { base64, rect } = this._processPreview(imgObj, mimeType);
         info.setPreview(base64, rect);
         let blob = this._processImage(imgObj, mimeType);
         info.blob = blob;
-
-        log('blob size:' + blob.size);
         this._chunkInfos = this.generateChunkInfos(info.size);
         info.emit('preview');
         resolve({
@@ -92,17 +89,6 @@ export default class QNImageUploader{
     });
   }
 
-  getImgUptoken() {
-    return new Promise((resolve, reject) => {
-      io.get('getimgkey').then(res => {
-        // resolve(res.data);
-        this._uptoken = res.data;
-        resolve({
-          doNext: true
-        });
-      });
-    });
-  }
 
   //获取分片的信息
   generateChunkInfos(size) {
@@ -163,10 +149,6 @@ export default class QNImageUploader{
     if(!info.blob) {
       return this.processFile(info.file);
     }
-    if(!this._uptoken) {
-      return this.getImgUptoken();
-    }
-
     let chunkInfo = this._chunkInfos.shift();
     if(chunkInfo) {
       return this.uploadChunk(chunkInfo);

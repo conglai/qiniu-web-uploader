@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events';
-import Top from '../top.jsx';
+import Top from '../utils';
 
 var NODE_QINIU_URL = '//7xme0g.com2.z0.glb.qiniucdn.com/';
 if(process.env.NODE_ENV !== 'production') {
