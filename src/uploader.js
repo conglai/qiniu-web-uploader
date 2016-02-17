@@ -8,7 +8,7 @@ function dataURItoBlob(dataURI) {
   let ab = new ArrayBuffer(byteString.length);
   let ia = new Uint8Array(ab);
   for (let i = 0; i < byteString.length; i++) {
-      ia[i] = byteString.charCodeAt(i);
+    ia[i] = byteString.charCodeAt(i);
   }
   let bb = new Blob([ab]);
   return bb;
