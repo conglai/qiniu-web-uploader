@@ -1,6 +1,6 @@
 {
   "name": "qiniu-web-uploader",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "七牛上传模块",
   "main": "lib/index.js",
   "scripts": {
@@ -21,7 +21,7 @@
     "url": "https://github.com/conglai/qiniu-web-uploader/issues"
   },
   "homepage": "https://github.com/conglai/qiniu-web-uploader",
-  "dependencies": {
+  "devDependencies": {
     "babel-cli": "^6.5.1",
     "babel-plugin-transform-class-properties": "^6.4.0",
     "babel-plugin-transform-es2015-classes": "^6.4.0",
