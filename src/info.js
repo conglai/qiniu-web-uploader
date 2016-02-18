@@ -2,7 +2,6 @@ import { EventEmitter } from 'events';
 
 let uniqueId = 1;
 export default class QNImageUploaderInfo extends EventEmitter{
-
   constructor(file) {
     super();
     this._file = file;

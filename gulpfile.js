@@ -41,7 +41,7 @@ const babelrc = {
 };
 const mochaConfig = {
   reporter: 'spec',
-  timeout: 100000,
+  timeout: 1000,
   globals: {
     should: require('should')
   }
@@ -57,28 +57,40 @@ const eslintSrc = [
   'tests/*.js'
 ];
 const ROOT = __dirname;
-gulp.task('default', () => {
-  gulp.src('src/*.js')
+gulp.task('tests', ['build'], () => {
+  return gulp.src('tests/*.js')
+    .pipe(mocha(mochaConfig))
+    .on('error', gutil.log);
+});
+gulp.task('build', () => {
+  return gulp.src('src/*.js')
     .pipe(eslint(eslintrc))
     .pipe(eslint.format())
     .pipe(babel(babelrc))
     .pipe(gulp.dest('lib'));
+});
+
+gulp.task('default', ['tests'], () => {
+
   gulp.watch(eslintSrc, event => {
     let path = event.path.replace(ROOT + '/', '');
+    gutil.log(path + ' is changed.');
     if(path.indexOf('tests') !== -1) {
-      let srcPath = path.replace('tests', 'src');
-      gulp.src(srcPath)
-        .pipe(eslint(eslintrc))
-        .pipe(eslint.format())
-        .pipe(babel(babelrc))
-        .pipe(gulp.dest('lib'));
-
+      gulp.src(path)
+        .pipe(mocha(mochaConfig))
+        .on('error', gutil.log);
     } else {
+      let testPath = path.replace('src','tests');
       gulp.src(path)
         .pipe(eslint(eslintrc))
         .pipe(eslint.format())
         .pipe(babel(babelrc))
-        .pipe(gulp.dest('lib'));
+        .pipe(gulp.dest('lib'))
+        .on('end', () => {
+          gulp.src(testPath)
+            .pipe(mocha(mochaConfig))
+            .on('error', gutil.log);
+        });
     }
 
   });
