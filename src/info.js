@@ -1,10 +1,4 @@
 import { EventEmitter } from 'events';
-import Top from '../utils';
-
-var NODE_QINIU_URL = '//7xme0g.com2.z0.glb.qiniucdn.com/';
-if(process.env.NODE_ENV !== 'production') {
-  NODE_QINIU_URL = '//7xlh8e.com2.z0.glb.qiniucdn.com/';
-}
 
 let uniqueId = 1;
 export default class QNImageUploaderInfo extends EventEmitter{
@@ -14,14 +8,10 @@ export default class QNImageUploaderInfo extends EventEmitter{
     this._file = file;
     this._size = file.size;
     this.__uniqueId = uniqueId ++;
-    this._lastModifiedDate = Top.formatDate(file.lastModifiedDate, '-', false);
   }
 
   get uniqueId() {
     return this.__uniqueId;
-  }
-  get lastModifiedDate() {
-    return this._lastModifiedDate;
   }
 
   get percent() {
@@ -35,9 +25,6 @@ export default class QNImageUploaderInfo extends EventEmitter{
     return this._offset || 0;
   }
 
-  get imgPath() {
-    return NODE_QINIU_URL + this._imgKey;
-  }
   //七牛的Key
   set imgKey(v) {
     this._imgKey = v;

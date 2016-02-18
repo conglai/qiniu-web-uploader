@@ -1,7 +1,6 @@
 import Uploader from './core.jsx';
 import { EventEmitter } from 'events';
 import LoaderInfo from './info.jsx';
-import Top, { log } from '../top.jsx';
 
 const PARALLEL_NUM = 8;
 

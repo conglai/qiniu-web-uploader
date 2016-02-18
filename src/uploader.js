@@ -10,8 +10,7 @@ function dataURItoBlob(dataURI) {
   for (let i = 0; i < byteString.length; i++) {
     ia[i] = byteString.charCodeAt(i);
   }
-  let bb = new Blob([ab]);
-  return bb;
+  return new Blob([ab]);
 }
 
 export default class QNImageUploader{
