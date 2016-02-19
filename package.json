@@ -35,7 +35,10 @@
     "gulp-mocha": "^2.2.0",
     "gulp-util": "^3.0.7",
     "jest-cli": "^0.8.2",
-    "should": "^8.2.2"
+    "jsdom": "^8.0.4",
+    "should": "^8.2.2",
+    "should-sinon": "0.0.5",
+    "sinon": "^1.17.3"
   },
   "jest": {
     "scriptPreprocessor": "./jest/processor.js",

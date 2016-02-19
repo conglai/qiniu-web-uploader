@@ -39,13 +39,16 @@ const babelrc = {
     ['transform-es2015-classes', {loose: true}]
   ]
 };
+
 const mochaConfig = {
   reporter: 'spec',
   timeout: 1000,
   globals: {
-    should: require('should')
+    should: require('should'),
+    env: require('./test-env')
   }
 };
+require('should-sinon');
 
 const gulp = require('gulp');
 const eslint = require('gulp-eslint');
