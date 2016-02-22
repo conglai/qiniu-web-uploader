@@ -3,8 +3,10 @@ node_js:
 - '4.1'
 install: npm install
 script: gulp tests
+before_deploy: npm install -g npm
 deploy:
   provider: npm
+  email: "nameyukan@gmail.com"
   on:
     tags: true
   api_key:
