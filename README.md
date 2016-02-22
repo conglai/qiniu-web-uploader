@@ -1,4 +1,4 @@
-# 七牛上传模块
+# 七牛上传模块[![Build Status](https://travis-ci.org/conglai/qiniu-web-uploader.svg?branch=master)](https://travis-ci.org/conglai/qiniu-web-uploader)
 
 ##功能
 * 压缩后上传

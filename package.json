@@ -23,6 +23,7 @@
   "homepage": "https://github.com/conglai/qiniu-web-uploader",
   "devDependencies": {
     "babel-core": "^6.5.2",
+    "babel-eslint": "^5.0.0",
     "babel-plugin-transform-class-properties": "^6.4.0",
     "babel-plugin-transform-es2015-classes": "^6.4.0",
     "babel-plugin-transform-es2015-object-super": "^6.4.0",
