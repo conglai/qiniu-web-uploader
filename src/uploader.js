@@ -17,9 +17,12 @@ export default class QNImageUploader{
 
   constructor(info, uptoken, compress = false) {
     this._info = info;
+    this._compress = compress;
     if(!compress) {
       info.blob = info.file;
     }
+
+    this._chunkInfos = this._generateChunkInfos(info.size);
     this.__ctxList = [];
     this._uptoken = uptoken;
   }
@@ -70,7 +73,7 @@ export default class QNImageUploader{
     };
   }
 
-  processFile(file) {
+  _processFile(file) {
     let previewUrl = window.URL.createObjectURL(file);
     let imgObj = new Image();
     let mimeType = file.type;
@@ -81,7 +84,6 @@ export default class QNImageUploader{
         info.setPreview(base64, rect);
         let blob = this._processImage(imgObj, mimeType);
         info.blob = blob;
-        this._chunkInfos = this.generateChunkInfos(info.size);
         info.emit('preview');
         resolve({
           doNext: true
@@ -93,7 +95,7 @@ export default class QNImageUploader{
 
 
   //获取分片的信息
-  generateChunkInfos(size) {
+  _generateChunkInfos(size) {
     let leftSize = size % BLOCK_SIZE;
     let blockNum = leftSize ? Math.floor(size / BLOCK_SIZE) : size / BLOCK_SIZE;
     let chunkInfos = [];
@@ -148,14 +150,14 @@ export default class QNImageUploader{
         });
       });
     }
-    if(!info.blob) {
-      return this.processFile(info.file);
+    if(this._compress) {
+      return this._processFile(info.file);
     }
     let chunkInfo = this._chunkInfos.shift();
     if(chunkInfo) {
-      return this.uploadChunk(chunkInfo);
+      return this._uploadChunk(chunkInfo);
     } else {
-      return this.makeImgFile();
+      return this._makeImgFile();
     }
   }
 
@@ -164,7 +166,7 @@ export default class QNImageUploader{
   // 参考:
   //  * http://developer.qiniu.com/docs/v6/api/reference/up/bput.html
   //  * http://developer.qiniu.com/docs/v6/api/reference/up/mkblk.html
-  uploadChunk(chunkInfo) {
+  _uploadChunk(chunkInfo) {
     let info = this._info;
     let { offset, end, isBlock,
       blockSize, blockNum } = chunkInfo;
@@ -220,7 +222,7 @@ export default class QNImageUploader{
 
   //## 创建文件
   // * http://developer.qiniu.com/docs/v6/api/reference/up/mkfile.html
-  makeImgFile() {
+  _makeImgFile() {
     let info = this._info;
     let { key, uptoken } = this._uptoken;
     let url = UPLOAD_URL + 'mkfile/' + info.size + '/key/' + key;

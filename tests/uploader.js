@@ -1,18 +1,19 @@
 'use strict';
 const Uploader = require('../lib/uploader').default;
 const sinon = require('sinon');
-let u;
-let info = {
-  emit: sinon.spy()
-};
-beforeEach(() => {
-  u = new Uploader(info, 'upload');
-});
 describe('Uploader > doNextAction', () => {
+  let u;
+  let info = {
+    emit: sinon.spy()
+  };
+  before(() => {
+    u = new Uploader(info, 'upload');
+  });
   it('info.shouldStop = true', () => {
     info.shouldStop = true;
     let p = u.doNextAction();
     info.emit.should.be.calledWith('stop');
+    p.should.be.a.Promise();
   });
   it('如果未上传完，执行uploadChunk', () => {
     info.shouldStop = false;
@@ -21,9 +22,9 @@ describe('Uploader > doNextAction', () => {
     };
     let c = 122;
     u._chunkInfos = [c];
-    u.uploadChunk = sinon.spy();
-    let p = u.doNextAction();
-    u.uploadChunk.should.be.calledWith(c);
+    u._uploadChunk = sinon.spy();
+    u.doNextAction();
+    u._uploadChunk.should.be.calledWith(c);
   });
   it('如果上传完，执行makeImgFile', () => {
     info.shouldStop = false;
@@ -31,8 +32,8 @@ describe('Uploader > doNextAction', () => {
       size: 128 * 64
     };
     u._chunkInfos = [];
-    u.makeImgFile = sinon.spy();
-    let p = u.doNextAction();
-    u.makeImgFile.should.be.calledOnce();
+    u._makeImgFile = sinon.spy();
+    u.doNextAction();
+    u._makeImgFile.should.be.calledOnce();
   });
 });
