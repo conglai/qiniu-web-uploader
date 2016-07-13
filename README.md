@@ -12,10 +12,28 @@ npm i qiniu-web-uploader
 ## 使用
 
 ```js
-import { UploaderQueue } from 'qiniu-web-uploader';
+import Uploader from 'qiniu-web-uploader';
 
-let queue = new UplUploaderQueue();
-queue.push(file, uptoken); // file为input，只能压缩图片，uptoken为七牛上传凭证
+/*
+{
+  uptoken: 'asdfsdf', //七牛上传凭证
+  key: 'sdfa' //base63字符串
+}
+*/
+let uploader = new Uploader(file, uptoken);
 
-queue.runUpload()
+uploader.on('progress', () => {
+  console.log(uploader.percent); //加载进度
+  console.log(uploader.offset); //字节
+  console.log(uploader.file); //文件
+});
+uploader.on('cancel', () => {
+  //取消
+});
+uploader.on('complete', () => {
+  console.log(uploader.imgRes); //文件
+});
+
+let imgRes = await uploader.upload(); //返回七牛返回的Key
+uploader.cancel(); //取消
 ```
