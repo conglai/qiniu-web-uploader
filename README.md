@@ -7,7 +7,7 @@
 [npm-downloads-image]: http://img.shields.io/npm/dm/qiniu-web-uploader.svg?style=flat
 
 ##功能
-* 压缩后上传
+* 七牛分片上传
 
 ## NPM
 

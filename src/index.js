@@ -1,14 +1,18 @@
 import { EventEmitter } from 'events';
-const UPLOAD_URL = '//upload.qiniu.com/';
-const BLOCK_SIZE = 1024 * 1024 * 4;
-const CHUNK_SIZE = 1024 * 128;
 
-export default class QNImageUploader extends EventEmitter{
+export default class QNWebUploader extends EventEmitter{
 
-  constructor(imgFile, uptoken) {
+  static QINIU_UPLOAD_URL = '//upload.qiniu.com/';
+  static BLOCK_SIZE = 1024 * 1024 * 4;
+  static CHUNK_SIZE = 1024 * 128;
+
+  constructor(imgFile, uptoken, bsize, csize, url) {
     super();
     this._imgFile = imgFile;
     this._uptoken = uptoken;
+    this._qiniuUrl = url || QNWebUploader.QINIU_UPLOAD_URL;
+    this._bsize = bsize || QNWebUploader.BLOCK_SIZE;
+    this._csize = csize || QNWebUploader.CHUNK_SIZE;
   }
 
   get file() {
@@ -73,18 +77,18 @@ export default class QNImageUploader extends EventEmitter{
   //  * http://developer.qiniu.com/docs/v6/api/reference/up/mkblk.html
   _uploadChunk(blob, lastPosition, ctx) {
     let url;
-    let offset = lastPosition % BLOCK_SIZE;
+    let offset = lastPosition % this._bsize;
     let size = blob.size;
     if(offset === 0) {
-      let blockSize = BLOCK_SIZE;
-      if(lastPosition + BLOCK_SIZE > size) {
+      let blockSize = this._bsize;
+      if(lastPosition + this._bsize > size) {
         blockSize = size - lastPosition;
       }
-      url = UPLOAD_URL + 'mkblk/' + blockSize;
+      url = this._qiniuUrl + 'mkblk/' + blockSize;
     } else {
-      url = UPLOAD_URL + 'bput/' + ctx + '/' + offset;
+      url = this._qiniuUrl + 'bput/' + ctx + '/' + offset;
     }
-    let blobEnd = lastPosition + CHUNK_SIZE;
+    let blobEnd = lastPosition + this._csize;
     blobEnd = blobEnd > size ? size : blobEnd;
     let chunk = blob.slice(lastPosition, blobEnd);
 
@@ -96,7 +100,7 @@ export default class QNImageUploader extends EventEmitter{
           resolve({
             ctx: res.ctx,
             lastPosition: blobEnd,
-            isBlockEnd: blobEnd % BLOCK_SIZE === 0 || blobEnd === size
+            isBlockEnd: blobEnd % this._bsize === 0 || blobEnd === size
           });
         }
       });
@@ -106,7 +110,7 @@ export default class QNImageUploader extends EventEmitter{
   //## 创建文件
   // * http://developer.qiniu.com/docs/v6/api/reference/up/mkfile.html
   _mkFile(ctxList, size) {
-    let url = UPLOAD_URL + 'mkfile/' + size + '/key/' + this._uptoken.key;
+    let url = this._qiniuUrl + 'mkfile/' + size + '/key/' + this._uptoken.key;
 
     return new Promise((resolve, reject) => {
       this._execPost(url, ctxList.join(','), 'text/plain', (err, res) => {
