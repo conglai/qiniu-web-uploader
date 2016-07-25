@@ -127,18 +127,28 @@ export default class QNWebUploader extends EventEmitter{
   _execPost(url, data, contentType, cb) {
     let xhr = new XMLHttpRequest();
     let err;
-    xhr.addEventListener('load', e => {
-      let res = JSON.parse(xhr.responseText);
-      cb(err, res);
-    });
-    xhr.addEventListener('error', e => {
-      if(this._errorTry) {
-        this._errorTry --;
-        this._execPost(url, data, contentType, cb);
-      } else {
-        cb(e, {});
+    if(xhr.addEventListener) {
+      xhr.addEventListener('load', e => {
+        let res = JSON.parse(xhr.responseText);
+        cb(err, res);
+      });
+      xhr.addEventListener('error', e => {
+        if(this._errorTry) {
+          this._errorTry --;
+          this._execPost(url, data, contentType, cb);
+        } else {
+          cb(e, {});
+        }
+      });
+    } else {
+      xhr.onreadystatechange = () => {
+        if(xhr.readyState==4 && xhr.status==200){
+          let res = JSON.parse(xhr.responseText);
+          cb(err, res);
+        }
       }
-    });
+      xhr.onerror = e => {};
+    }
     xhr.open('POST', url, true);
     xhr.setRequestHeader('Content-Type', contentType);
     xhr.setRequestHeader('Authorization', 'UpToken ' + this._uptoken.uptoken);
