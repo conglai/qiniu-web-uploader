@@ -1,6 +1,6 @@
 {
   "name": "qiniu-web-uploader",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "七牛上传模块",
   "main": "lib/index.js",
   "scripts": {
@@ -23,11 +23,13 @@
   "homepage": "https://github.com/conglai/qiniu-web-uploader",
   "babel": {
     "presets": [
-      "es2015",
+      "es2015-loose",
       "stage-0"
     ],
     "plugins": [
       "transform-runtime",
+      "transform-es3-property-literals",
+      "transform-es3-member-expression-literals",
       "transform-class-properties",
       "transform-es2015-object-super"
     ]
@@ -37,7 +39,11 @@
     "babel-core": "^6.5.2",
     "babel-loader": "^6.2.4",
     "babel-plugin-transform-class-properties": "^6.4.0",
+    "babel-plugin-transform-es2015-classes": "^6.9.0",
     "babel-plugin-transform-es2015-object-super": "^6.4.0",
+    "babel-plugin-transform-es3-member-expression-literals": "^6.8.0",
+    "babel-plugin-transform-es3-property-literals": "^6.8.0",
+    "babel-preset-es2015-loose": "^7.0.0",
     "babel-plugin-transform-runtime": "^6.4.0",
     "babel-preset-es2015": "^6.3.13",
     "babel-preset-stage-0": "^6.3.13",
